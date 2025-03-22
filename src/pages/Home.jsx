@@ -17,7 +17,6 @@ const Home = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const slideIntervalRef = useRef(null);
-
   useEffect(() => {
     slideIntervalRef.current = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
@@ -73,6 +72,10 @@ const Home = () => {
     fetchMovies();
   }, []);
 
+  const uniqueTrendingMovies = trendingMovies.filter(
+    (movie, index, self) => index === self.findIndex((m) => m.$id === movie.$id)
+  );
+
   return (
     <main className="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white min-h-screen">
       <div className="relative w-full md:px-8 h-64 md:h-96 overflow-hidden">
@@ -99,27 +102,16 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
-        {trendingMovies?.length > 0 && (
-          <section className="mb-8">
+      <div className="container mx-auto px-8 py-6">
+        {uniqueTrendingMovies?.length > 0 && (
+          <section className="mb-8 space-x-8">
             <h2 className="text-2xl font-bold mb-4">Trending Movies</h2>
-            <div className="flex overflow-x-auto space-x-8 scrollbar-hide">
-              {trendingMovies.map((movie, index) => (
+            <div className="grid grid-cols-2 gap-4 md:flex md:gap-6 overflow-x-auto scrollbar-hide">
+                {uniqueTrendingMovies.map((movie, index) => (
                 <div key={movie.$id} className="relative flex-shrink-0 w-36 text-center">
                   <span
-                    className="
-                      absolute
-                      inset-0
-                      flex
-                     items-center
-                      justify-center
-                      text-[5rem]
-                      font-extrabold
-                      text-white
-                      pointer-events-none
-                      z-0
-                    "
-                    style={{ opacity: 0.15 }} 
+                    className="absolute inset-0 flex items-center justify-center text-[5rem] font-extrabold text-white pointer-events-none z-0"
+                    style={{ opacity: 0.15 }}
                   >
                     {index + 1}
                   </span>
@@ -149,10 +141,7 @@ const Home = () => {
                   <h3 className="text-xl font-semibold mb-2">{genreName}</h3>
                   <div className="flex gap-4 overflow-x-auto scrollbar-hide">
                     {moviesByGenre.map((movie) => (
-                      <div
-                        key={movie.id}
-                        className="flex-shrink-0 w-36"
-                      >
+                      <div key={movie.id} className="flex-shrink-0 w-36">
                         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                           <img
                             src={movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : PLACEHOLDER_IMAGE}
